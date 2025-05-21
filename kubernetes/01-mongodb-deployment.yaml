@@ -1,0 +1,64 @@
+# kubernetes/01-mongodb-deployment.yaml
+
+# Implementa configurações do deployment, inicialização POD e serviços
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deployment
+  labels:
+    app: mongodb
+spec:
+  replicas: 1 # Uma única réplica para uma instância standalone
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo-custom:v1 # Nossa imagem Docker personalizada
+          imagePullPolicy: Never # Não tentar puxar a imagem de um registro remoto
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME # Variáveis de ambiente para o MongoDB (do Dockerfile)
+              value: admin
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: password
+          volumeMounts:
+            - name: mongodb-persistent-storage
+              mountPath: /data/db # Onde o MongoDB armazena os dados
+            - name: mongodb-backup-storage # Volume para backups
+              mountPath: /data/db/backup
+          livenessProbe: # Probe de Liveness: verifica se o contêiner ainda está vivo
+            exec:
+              command:
+                # para versões 4< o comando é 'mongo'
+                - mongosh
+                - --disableImplicitReadWriteCausalConsistency
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 30 # Espera 30 segundos antes da primeira checagem
+            periodSeconds: 10 # Checa a cada 10 segundos
+            timeoutSeconds: 5 # Timeout de 5 segundos
+            failureThreshold: 3 # 3 falhas antes de reiniciar o contêiner
+          readinessProbe: # Probe de Readiness: verifica se o contêiner está pronto para receber tráfego
+            exec:
+              command:
+                - mongosh
+                - --disableImplicitReadWriteCausalConsistency
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 15 # Espera 15 segundos antes da primeira checagem
+            periodSeconds: 5 # Checa a cada 5 segundos
+            timeoutSeconds: 3 # Timeout de 3 segundos
+            failureThreshold: 5 # 5 falhas antes de marcar o contêiner como "não pronto"
+      volumes:
+        - name: mongodb-persistent-storage
+          persistentVolumeClaim:
+            claimName: mongodb-pvc # Referencia o PVC criado
+        - name: mongodb-backup-storage
+          emptyDir: {} # Um volume temporário para backups (será resetado se o pod reiniciar)

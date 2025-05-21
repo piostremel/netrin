@@ -1,0 +1,16 @@
+# kubernetes/03-mongodb-pvc.yaml
+
+# implementa os requisitos de persistencia
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-pvc
+  labels:
+    app: mongodb
+spec:
+  accessModes:
+    - ReadWriteOnce # Permite que o volume seja montado por um único nó em modo de leitura/escrita
+  resources:
+    requests:
+      storage: 1Gi # Solicita 1 GB de armazenamento
+  storageClassName: standard # Usa o StorageClass padrão do Minikube

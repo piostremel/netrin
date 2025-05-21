@@ -1,0 +1,17 @@
+# kubernetes/02-mongodb-service.yaml
+
+#implementa os requisitos do serviço, acessos, porta, etc.
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  labels:
+    app: mongodb
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017 # Porta que o Service expõe
+      targetPort: 27017 # Porta do contêiner MongoDB
+  type: ClusterIP # Acessível apenas dentro do cluster

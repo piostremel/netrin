@@ -1,0 +1,36 @@
+COMPLETO - Desafio Técnico - MongoDB no AKS (Kubernetes)
+
+Objetivo
+
+Avaliar a capacidade do candidato de instalar, configurar e garantir a persistência de dados de uma instância
+MongoDB no Kubernetes, simulando o que temos no ambiente de produção.
+Descrição do Desafio
+Você deve provisionar uma instância do MongoDB rodando de forma manual (sem serviço gerenciado) em
+um cluster Kubernetes (de preferência AKS, ou minikube/kind se não tiver acesso).
+
+O que esperamos
+
+OK 1. Instância MongoDB funcional (pode ser Standalone)
+OK 2. Persistência de dados: usando PVC e StorageClass
+OK 3. Backup simples: script de mongodump com salvamento em volume ou diretório local
+OK 4. Readiness e Liveness probes
+OK 5. Documentação curta com:
+OK - Explicação da estrutura dos manifests - ESTÃO NOS PRÓPRIOS MANIFESTS + CLUSTER.PDF
+OK - Comando de deploy
+OK - Como testar persistência (ex: cria dados, derruba pod, dados continuam)
+OK - Como executar o script de backup
+
+Critérios de Avaliação (ATENDENDO 100%)
+
+- Estrutura dos manifests (YAMLs bem organizados) [Médio]
+- Persistência de dados [Alto]
+- Backup funcional [Alto]
+- Probes configurados [Médio]
+- Clareza na documentação [Médio]
+- Uso de boas práticas (ex: labels, namespaces, securityContext) [Bonus]
+
+Entrega
+
+- Suba tudo em um repositório Git (público ou privado com acesso)
+- Incluir um README.md com instruções de deploy/teste (DEPLOYMENT DETALHADO EM CLUSTER.PDF)
+- Prazo sugerido: 1-2 dias
